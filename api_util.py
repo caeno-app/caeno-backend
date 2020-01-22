@@ -1,24 +1,16 @@
 import json
 import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+X_APP_KEY = os.getenv("X_APP_KEY")
+X_APP_ID = os.getenv("X_APP_ID")
 
 def getRestaurantsFromAPI(miles, lat, lng, limit=20):
-    url = f"{base_url}{endpoints['location']}?ll={lat}%2C{lng}&distance={miles}mi&limit={limit}"
-
-    response = requests.get(url, headers=headers)
-    if response.status_code == 200:
-        return json.loads(response.content.decode('utf-8'))
-    else:
-        return None
-
-if __name__ == "__main__":
-    DEBUG = True
-
-    #This should be moved I think.
-    headers = {'x-app-id': '817c0683', 'x-app-key' : 'e6dd72bb3fed034be634d2eb5ea3977b', 'x-remote-user-id' : '0'}
-    api_url = "https://trackapi.nutritionix.com/v2/locations?ll=33.6459%2C-117.8370&distance=50mi&limit=3"
+    headers = {'x-remote-user-id' : '0', 'x-app-id': X_APP_ID, 'x-app-key' : X_APP_KEY}
     base_url = "https://trackapi.nutritionix.com/"
     endpoints = {"location" : "v2/locations"}
-
-    if DEBUG:
-        print(json.dumps(getRestaurantsFromAPI(5,33.64,-117.83,3),indent=2))
+    url = f"{base_url}{endpoints['location']}?ll={lat}%2C{lng}&distance={miles}mi&limit={limit}"
+    return requests.get(url, headers=headers)
 
