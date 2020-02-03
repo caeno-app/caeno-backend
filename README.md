@@ -1,8 +1,9 @@
 # caeno-backend
 
-Get Nearby Restaurants:
------------------------
-ROUTE [el/restaurants]:
+### Get Nearby Restaurants:
+--------------------------
+**ROUTE [el/restaurants]:**
+
 http://172.112.215.241/el/restaurants?keyword=taco&dist=10&lat=33.645&lng=-117.843
 
 Arguments:
@@ -17,9 +18,10 @@ Arguments:
 ```
 
 
-Get Nearby Food Items
----------------------
-ROUTE [/el/menu]:
+### Get Nearby Food Items
+-------------------------
+**ROUTE [/el/menu]:**
+
 http://172.112.215.241/el/menu?keyword=taco&dist=10&lat=33.645&lng=-117.843
 
 Arguments:
@@ -34,8 +36,9 @@ Arguments:
 ```
 
 
-Routes:
-/restaurants
+Nutrix API Get Nearby Restaurants
+---------------------------------
+**ROUTE [/restaurants]:**
 
 Arguments: 
 - dist (in miles)
