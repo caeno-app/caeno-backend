@@ -2,7 +2,7 @@
 
 ### Get Nearby Restaurants:
 --------------------------
-**ROUTE [el/restaurants]:**
+**ROUTE: /el/restaurants**
 
 http://172.112.215.241/el/restaurants?keyword=taco&dist=10&lat=33.645&lng=-117.843
 
@@ -20,7 +20,7 @@ Arguments:
 
 ### Get Nearby Food Items
 -------------------------
-**ROUTE [/el/menu]:**
+**ROUTE: /el/menu**
 
 http://172.112.215.241/el/menu?keyword=taco&dist=10&lat=33.645&lng=-117.843
 
@@ -36,9 +36,9 @@ Arguments:
 ```
 
 
-Nutrix API Get Nearby Restaurants
+### Nutrix API Get Nearby Restaurants
 ---------------------------------
-**ROUTE [/restaurants]:**
+**ROUTE: /restaurants**
 
 Arguments: 
 - dist (in miles)
