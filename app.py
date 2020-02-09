@@ -17,6 +17,7 @@ def home():
 def get_restaurant_data(restaurant_id):
     return "Information about:" + str(restaurant_id)
 
+# runs query against Nutrix API, not elasticsearch
 @app.route('/restaurants')
 def get_restaurant_locations():
     try:
@@ -37,6 +38,22 @@ def get_restaurant_locations():
         return Response(response= "{'error': 'Failed to parse request.' }",status=400,mimetype="application/json")
 
 
+@app.route('/el/restaurantslocation')
+def get_nearby_restaurants_location():
+    try:
+        dist = int(request.args.get('dist'))
+        lng = float(request.args.get('lng'))
+        lat = float(request.args.get('lat'))
+
+        json_response = elastic_util.elRestaurantGENERAL(dist, lat, lng)
+        return Response(response=json_response, status=200, mimetype="application/json")
+
+    except ValueError:
+        return Response(response= "{'error': 'Failed to parse request.' }",status=400,mimetype="application/json")
+
+# http://127.0.0.1:5000/el/restaurants?dist=10&lat=33.645&lng=-117.843
+
+
 @app.route('/el/restaurants')
 def get_nearby_restaurants():
     try:
@@ -52,6 +69,22 @@ def get_nearby_restaurants():
         return Response(response= "{'error': 'Failed to parse request.' }",status=400,mimetype="application/json")
 
 # http://127.0.0.1:5000/el/restaurants?keyword=taco&dist=10&lat=33.645&lng=-117.843
+
+
+@app.route('/el/menulocation')
+def get_nearby_food_location():
+    try:
+        dist = int(request.args.get('dist'))
+        lng = float(request.args.get('lng'))
+        lat = float(request.args.get('lat'))
+
+        json_response = elastic_util.elMenuGENERAL(dist, lat, lng)
+        return Response(response=json_response, status=200, mimetype="application/json")
+
+    except ValueError:
+        return Response(response= "{'error': 'Failed to parse request.' }",status=400,mimetype="application/json")
+
+# http://127.0.0.1:5000/el/menu?dist=10&lat=33.645&lng=-117.843
 
 
 @app.route('/el/menu')
