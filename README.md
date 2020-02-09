@@ -1,6 +1,19 @@
 # caeno-backend
 
-### Get Nearby Restaurants:
+### Get Nearby Restaurants (LOCATION Only):
+--------------------------
+**ROUTE: /el/restaurantslocation**
+
+http://172.112.215.241/el/restaurants?dist=10&lat=33.645&lng=-117.843
+
+Arguments:
+- dist (in miles)
+- lat
+- lng
+
+
+
+### Get Nearby Restaurants (KEYWORD Required):
 --------------------------
 **ROUTE: /el/restaurants**
 
@@ -18,7 +31,19 @@ Arguments:
 ```
 
 
-### Get Nearby Food Items
+### Get Nearby Food Items (LOCATION Only)
+-------------------------
+**ROUTE: /el/menulocation**
+
+http://172.112.215.241/el/menu?dist=10&lat=33.645&lng=-117.843
+
+Arguments:
+- dist (in miles)
+- lat
+- lng
+
+
+### Get Nearby Food Items (KEYWORD Required)
 -------------------------
 **ROUTE: /el/menu**
 
