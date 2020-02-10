@@ -121,3 +121,14 @@ Usage example:
 }
 ```
 
+### Run Program
+-----------------------
+```
+# wget https://github.com/caeno-app/caeno-backend/archive/master.zip
+# unzip master.zip
+# cd caeno-backend-master/
+# gunicorn3 --workers=3 app:app
+
+#stops all gunicorn workers
+pkill gunicorn
+```
