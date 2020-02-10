@@ -4,7 +4,7 @@
 --------------------------
 **ROUTE: /el/restaurantslocation**
 
-http://172.112.215.241/el/restaurants?dist=10&lat=33.645&lng=-117.843
+http://172.112.215.241/el/restaurantslocation?dist=10&lat=33.645&lng=-117.843
 
 Arguments:
 - dist (in miles)
@@ -17,7 +17,7 @@ Arguments:
 --------------------------
 **ROUTE: /el/restaurants**
 
-http://172.112.215.241/el/restaurantslocation?keyword=taco&dist=10&lat=33.645&lng=-117.843
+http://172.112.215.241/el/restaurants?keyword=taco&dist=10&lat=33.645&lng=-117.843
 
 Arguments:
 - keyword
