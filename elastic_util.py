@@ -56,7 +56,7 @@ def elasticMenuQuery(keyword, distance, lat, lon, orderby=None, order="asc") -> 
     )
 
     for doc in response['hits']['hits']:
-        listResults.append(doc["_source"])
+        listResults.append((doc["_id"], doc["_source"]))
 
     print(json.dumps(listResults))
     return json.dumps(listResults)
@@ -99,7 +99,7 @@ def elMenuGENERAL(distance, lat, lon, orderby=None, order="asc") -> 'json string
     )
 
     for doc in response['hits']['hits']:
-        listResults.append(doc["_source"])
+        listResults.append((doc["_id"], doc["_source"]))
 
     print(json.dumps(listResults))
     return json.dumps(listResults)
