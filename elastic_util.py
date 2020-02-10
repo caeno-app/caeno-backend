@@ -26,7 +26,7 @@ def elasticMenuQuery(keyword, distance, lat, lon, orderby=None, order="asc") -> 
     elastic_client = Elasticsearch([GLOBALS.ELASTIC_IP], http_auth=('user1', 'user1'), port=9200, use_ssl=False)
 
     body = {
-        "_source": ["item_name", "brand_id", "calories", "restaurant", "serving"],
+        "_source": ["_id", "item_name", "brand_id", "calories", "restaurant", "serving"],
         # omit lat_long which could have 20+ entries
         "query": {
             "bool": {
@@ -72,7 +72,7 @@ def elMenuGENERAL(distance, lat, lon, orderby=None, order="asc") -> 'json string
     elastic_client = Elasticsearch([GLOBALS.ELASTIC_IP], http_auth=('user1', 'user1'), port=9200, use_ssl=False)
 
     body = {
-        "_source": ["item_name", "brand_id", "calories", "restaurant", "serving"],
+        "_source": ["_id", "item_name", "brand_id", "calories", "restaurant", "serving"],
         # omit lat_long which could have 20+ entries
         "query": {
             "bool" : {
