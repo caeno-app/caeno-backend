@@ -1,5 +1,5 @@
 from flask import Flask, request, Response
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 
 import api_util as api
 import json
@@ -8,18 +8,26 @@ import elastic_util
 DEBUG = True
 
 app = Flask(__name__)
+
+# https://stackoverflow.com/questions/38641785/specify-domains-for-flask-cors
 CORS(app, resources={r"/api/*": {"origins": "*"}})
+# CORS(app, resources={r"/api/*": {"origins": ["caeno.app",domain2.com]}})
+
+# https://flask-cors.corydolphin.com/en/latest/api.html#decorator
+# more specific modifiers that can be added to routes above ^
 
 @app.route('/')
 def home():
     return "Hello"
 
+# # can individually specify allowed domains able to call route using @cross_origin
+# @cross_origin(["domain1.com", "domain2.com"])
 @app.route('/api/restaurants/<int:restaurant_id>')
 def get_restaurant_data(restaurant_id):
     return "Information about:" + str(restaurant_id)
 
 # runs query against Nutrix API, not elasticsearch
-@app.route('/api/nutrixrestaurants')
+@app.route('/api/nutrixrestaurants', methods=['GET'])
 def get_restaurant_locations():
     try:
         dist = int(request.args.get('dist'))
@@ -39,7 +47,7 @@ def get_restaurant_locations():
         return Response(response= "{'error': 'Failed to parse request.' }",status=400,mimetype="application/json")
 
 
-@app.route('/api/elrestaurants')
+@app.route('/api/elrestaurants', methods=['GET'])
 def get_nearby_restaurants():
     try:
         keyword = request.args.get('keyword')
@@ -59,7 +67,7 @@ def get_nearby_restaurants():
 # http://127.0.0.1:5000/api/elrestaurants?keyword=taco&dist=10&lat=33.645&lng=-117.843
 
 
-@app.route('/api/elmenu')
+@app.route('/api/elmenu', methods=['GET'])
 def get_nearby_food():
     try:
         keyword = request.args.get('keyword')
