@@ -9,7 +9,7 @@ http://172.112.215.241/api/elrestaurants?keyword=taco&dist=10&lat=33.645&lng=-11
 Arguments:
 | Name | Required | Description |
 | --- | --- | --- |
-| keyword | optional | keyword part of the restaurant's name |
+| keyword | (optional) | keyword part of the restaurant's name |
 | dist | required | maximum radius of search results (in miles) |
 | lat | required | latitude (float) |
 | lng | required | longitude (float) |
@@ -24,7 +24,7 @@ http://172.112.215.241/api/elmenu?dist=10&lat=33.645&lng=-117.843
 Arguments:
 | Name | Required | Description |
 | --- | --- | --- |
-| keyword | optional | keyword part of the item's name, or restaurant's name |
+| keyword | (optional) | keyword part of the item's name, or restaurant's name |
 | dist | required | maximum radius of search results (in miles) |
 | lat | required | latitude (float) |
 | lng | required | longitude (float) |
@@ -40,7 +40,7 @@ Arguments:
 | dist | required | maximum radius of search results (in miles) |
 | lat | required | latitude (float) |
 | lng | required | longitude (float) |
-| lim | optional | How many results to return (default = 20, max = 50) |
+| lim | (optional) | How many results to return (default = 20, max = 50) |
 
 Usage example:
 /restaurants?dist=2&lat=33.992&lng=-117.374&lim=2
