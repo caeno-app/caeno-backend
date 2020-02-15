@@ -8,7 +8,7 @@ http://172.112.215.241/api/elrestaurants?keyword=taco&dist=10&lat=33.645&lng=-11
 
 Arguments:
 | Name | Required | Description |
-| --- | --- |
+| --- | --- | --- |
 | keyword | optional | keyword part of the restaurant's name |
 | dist | required | maximum radius of search results (in miles) |
 | lat | required | latitude (float) |
@@ -23,12 +23,11 @@ http://172.112.215.241/api/elmenu?dist=10&lat=33.645&lng=-117.843
 
 Arguments:
 | Name | Required | Description |
-| --- | --- |
+| --- | --- | --- |
 | keyword | optional | keyword part of the item's name, or restaurant's name |
 | dist | required | maximum radius of search results (in miles) |
 | lat | required | latitude (float) |
 | lng | required | longitude (float) |
-
 
 
 ### Nutrix API Get Nearby Restaurants
@@ -37,7 +36,7 @@ Arguments:
 
 Arguments:
 | Name | Required | Description |
-| --- | --- |
+| --- | --- | --- |
 | dist | required | maximum radius of search results (in miles) |
 | lat | required | latitude (float) |
 | lng | required | longitude (float) |
