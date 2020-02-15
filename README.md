@@ -98,7 +98,14 @@ Usage example:
 # wget https://github.com/caeno-app/caeno-backend/archive/master.zip
 # unzip master.zip
 # cd caeno-backend-master/
-# gunicorn3 --workers=3 app:app
+
+# sudo apt-get install python3-pip -y
+# pip3 install gunicorn
+# pip3 install -r requirements.txt
+
+# whereis gunicorn
+# from output of whereis, use the path in first part of command below
+# /home/user1/.local/bin/gunicorn --workers=3 app:app
 
 #stops all gunicorn workers
 pkill gunicorn
