@@ -98,6 +98,7 @@ def elasticRestaurantQuery(keyword, distance, lat, lon, orderby=None, order="asc
     elastic_client = Elasticsearch([GLOBALS.ELASTIC_IP], http_auth=('user1', 'user1'), port=9200, use_ssl=False)
 
     body = {
+        "_source": ["_id", "name", "brand_id", "address", "phone", "website", "lat_lon"],
         "query": {
             "bool": {
                 "filter": {
