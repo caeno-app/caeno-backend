@@ -1,6 +1,6 @@
-
 from flask import Flask, request, Response
-import logging
+from flask_cors import CORS
+
 import api_util as api
 import json
 import elastic_util
@@ -8,17 +8,18 @@ import elastic_util
 DEBUG = True
 
 app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 @app.route('/')
 def home():
     return "Hello"
 
-@app.route('/restaurants/<int:restaurant_id>')
+@app.route('/api/restaurants/<int:restaurant_id>')
 def get_restaurant_data(restaurant_id):
     return "Information about:" + str(restaurant_id)
 
 # runs query against Nutrix API, not elasticsearch
-@app.route('/restaurants')
+@app.route('/api/nutrixrestaurants')
 def get_restaurant_locations():
     try:
         dist = int(request.args.get('dist'))
@@ -38,23 +39,7 @@ def get_restaurant_locations():
         return Response(response= "{'error': 'Failed to parse request.' }",status=400,mimetype="application/json")
 
 
-@app.route('/el/restaurantslocation')
-def get_nearby_restaurants_location():
-    try:
-        dist = int(request.args.get('dist'))
-        lng = float(request.args.get('lng'))
-        lat = float(request.args.get('lat'))
-
-        json_response = elastic_util.elRestaurantGENERAL(dist, lat, lng)
-        return Response(response=json_response, status=200, mimetype="application/json")
-
-    except ValueError:
-        return Response(response= "{'error': 'Failed to parse request.' }",status=400,mimetype="application/json")
-
-# http://127.0.0.1:5000/el/restaurants?dist=10&lat=33.645&lng=-117.843
-
-
-@app.route('/el/restaurants')
+@app.route('/api/elrestaurants')
 def get_nearby_restaurants():
     try:
         keyword = request.args.get('keyword')
@@ -62,32 +47,19 @@ def get_nearby_restaurants():
         lng = float(request.args.get('lng'))
         lat = float(request.args.get('lat'))
 
+        # if not keyword:
+        #     return "no keyword used"
+
         json_response = elastic_util.elasticRestaurantQuery(keyword, dist, lat, lng)
         return Response(response=json_response, status=200, mimetype="application/json")
 
     except ValueError:
         return Response(response= "{'error': 'Failed to parse request.' }",status=400,mimetype="application/json")
 
-# http://127.0.0.1:5000/el/restaurants?keyword=taco&dist=10&lat=33.645&lng=-117.843
+# http://127.0.0.1:5000/api/elrestaurants?keyword=taco&dist=10&lat=33.645&lng=-117.843
 
 
-@app.route('/el/menulocation')
-def get_nearby_food_location():
-    try:
-        dist = int(request.args.get('dist'))
-        lng = float(request.args.get('lng'))
-        lat = float(request.args.get('lat'))
-
-        json_response = elastic_util.elMenuGENERAL(dist, lat, lng)
-        return Response(response=json_response, status=200, mimetype="application/json")
-
-    except ValueError:
-        return Response(response= "{'error': 'Failed to parse request.' }",status=400,mimetype="application/json")
-
-# http://127.0.0.1:5000/el/menu?dist=10&lat=33.645&lng=-117.843
-
-
-@app.route('/el/menu')
+@app.route('/api/elmenu')
 def get_nearby_food():
     try:
         keyword = request.args.get('keyword')
@@ -95,13 +67,16 @@ def get_nearby_food():
         lng = float(request.args.get('lng'))
         lat = float(request.args.get('lat'))
 
+        # if not keyword:
+        #     return "no keyword used"
+
         json_response = elastic_util.elasticMenuQuery(keyword, dist, lat, lng)
         return Response(response=json_response, status=200, mimetype="application/json")
 
     except ValueError:
         return Response(response= "{'error': 'Failed to parse request.' }",status=400,mimetype="application/json")
 
-# http://127.0.0.1:5000/el/menu?keyword=taco&dist=10&lat=33.645&lng=-117.843
+# http://127.0.0.1:5000/api/elmenu?keyword=taco&dist=10&lat=33.645&lng=-117.843
 
 # @app.errorhandler(500)
 # def internal_error(error):

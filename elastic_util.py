@@ -2,7 +2,7 @@ from elasticsearch import Elasticsearch
 import GLOBALS
 import json
 
-def getSortArg(orderby, lat, lon, order="asc"):
+def _getSortArg(orderby, lat, lon, order="asc"):
     # TODO: Check if orderby is a valid column in db
     # We have the option to not sort at all, or sort by a specific field,
     #  in either ascending or decending order.
@@ -20,6 +20,36 @@ def getSortArg(orderby, lat, lon, order="asc"):
             "mode": "min"}}
 
 
+def _keyOptionalMenu(keyword):
+    if keyword is None:
+        return {"must" : {
+                    "match_all" : {}
+                }}
+    else:
+        return {
+            "must": {
+                "multi_match": {
+                    "fields": ["restaurant", "item_name", "serving"],
+                    "query": f"{keyword}"
+                }
+            }
+        }
+
+def _keyOptionalRestaurant(keyword):
+    if keyword is None:
+        return {"must" : {
+                    "match_all" : {}
+                }}
+    else:
+        return {
+            "must": {
+                    "multi_match": {
+                        "fields": ["name"],
+                        "query": f"{keyword}"
+                    }
+                }
+        }
+
 def elasticMenuQuery(keyword, distance, lat, lon, orderby=None, order="asc") -> 'json string':
     listResults = list()
 
@@ -30,12 +60,6 @@ def elasticMenuQuery(keyword, distance, lat, lon, orderby=None, order="asc") -> 
         # omit lat_long which could have 20+ entries
         "query": {
             "bool": {
-                "must": {
-                    "multi_match": {
-                        "fields": ["restaurant", "item_name", "serving"],
-                        "query": f"{keyword}"
-                    }
-                },
                 "filter": {
                     "geo_distance": {
                         "distance": f"{distance}mi",
@@ -48,8 +72,11 @@ def elasticMenuQuery(keyword, distance, lat, lon, orderby=None, order="asc") -> 
             }
         }
     }
+    if keyword is not None:
+        body["query"]["bool"] = _keyOptionalMenu(keyword)
+
     if orderby is not None:
-        body["sort"] = [getSortArg(orderby, lat, lon, order)]
+        body["sort"] = [_getSortArg(orderby, lat, lon, order)]
 
     response = elastic_client.search(
         index="menu_index", body=body
@@ -65,87 +92,6 @@ def elasticMenuQuery(keyword, distance, lat, lon, orderby=None, order="asc") -> 
 # elasticMenuQuery("acai", 3, 33.6, -117.8)
 
 
-# returns nearby food items with just location in mind
-def elMenuGENERAL(distance, lat, lon, orderby=None, order="asc") -> 'json string':
-    listResults = list()
-
-    elastic_client = Elasticsearch([GLOBALS.ELASTIC_IP], http_auth=('user1', 'user1'), port=9200, use_ssl=False)
-
-    body = {
-        "_source": ["_id", "item_name", "brand_id", "calories", "restaurant", "serving"],
-        # omit lat_long which could have 20+ entries
-        "query": {
-            "bool" : {
-                "must" : {
-                    "match_all" : {}
-                },
-                "filter": {
-                    "geo_distance": {
-                        "distance": f"{distance}mi",
-                        "lat_lon": {
-                            "lat": lat,
-                            "lon": lon
-                        }
-                    }
-                }
-            }
-        }
-    }
-    if orderby is not None:
-        body["sort"] = [getSortArg(orderby, lat, lon, order)]
-
-    response = elastic_client.search(
-        index="menu_index", body=body
-    )
-
-    for doc in response['hits']['hits']:
-        listResults.append((doc["_id"], doc["_source"]))
-
-    print(json.dumps(listResults))
-    return json.dumps(listResults)
-
-# elMenuGENERAL("acai", 3, 33.6, -117.8)
-
-
-# returns nearby restaurants with just location in mind
-def elRestaurantGENERAL(distance, lat, lon, orderby=None, order="asc") -> 'json string':
-    listResults = list()
-
-    elastic_client = Elasticsearch([GLOBALS.ELASTIC_IP], http_auth=('user1', 'user1'), port=9200, use_ssl=False)
-
-    body = {
-        "query": {
-            "bool" : {
-                "must" : {
-                    "match_all" : {}
-                },
-                "filter" : {
-                    "geo_distance": {
-                        "distance": f"{distance}mi",
-                        "lat_lon": {
-                            "lat": lat,
-                            "lon": lon
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    if orderby is not None:
-        body["sort"] = [getSortArg(orderby, lat, lon, order)]
-
-    response = elastic_client.search(
-        index="restaurant_index",
-        body=body
-    )
-    for doc in response['hits']['hits']:
-        listResults.append(doc["_source"])
-    return json.dumps(listResults)
-
-# elRestaurantGENERAL(5, 33.6, -117.8)
-
-
 def elasticRestaurantQuery(keyword, distance, lat, lon, orderby=None, order="asc") -> 'json string':
     listResults = list()
 
@@ -154,12 +100,6 @@ def elasticRestaurantQuery(keyword, distance, lat, lon, orderby=None, order="asc
     body = {
         "query": {
             "bool": {
-                "must": {
-                    "multi_match": {
-                        "fields": ["name"],
-                        "query": f"{keyword}"
-                    }
-                },
                 "filter": {
                     "geo_distance": {
                         "distance": f"{distance}mi",
@@ -172,9 +112,11 @@ def elasticRestaurantQuery(keyword, distance, lat, lon, orderby=None, order="asc
             }
         }
     }
+    if keyword is not None:
+        body["query"]["bool"] = _keyOptionalRestaurant(keyword)
 
     if orderby is not None:
-        body["sort"] = [getSortArg(orderby, lat, lon, order)]
+        body["sort"] = [_getSortArg(orderby, lat, lon, order)]
 
     response = elastic_client.search(
         index="restaurant_index",
@@ -204,7 +146,7 @@ def elasticBrandIDQuery(brand_id, lat, lon, orderby=None, order="asc") -> 'json 
     }
 
     if orderby is not None:
-        body["sort"] = [getSortArg(orderby, lat, lon, order)]
+        body["sort"] = [_getSortArg(orderby, lat, lon, order)]
 
     response = elastic_client.search(index="restaurant_index", body=body)
 
