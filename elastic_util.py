@@ -100,6 +100,7 @@ def elasticRestaurantQuery(keyword, distance, lat, lon, denseVector=[0,0,0,0,0,0
 
     body = {
         #"_source": ["_id", "name", "brand_id", "address", "phone", "website", "lat_lon", "densevector"],
+        "size": 30,
         "query" : {
         "bool" : {
           "must" : {
