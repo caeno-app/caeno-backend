@@ -4,6 +4,7 @@ from flask_cors import CORS, cross_origin
 import api_util as api
 import json
 import elastic_util
+import ast
 
 DEBUG = True
 
@@ -54,11 +55,16 @@ def get_nearby_restaurants():
         dist = int(request.args.get('dist'))
         lng = float(request.args.get('lng'))
         lat = float(request.args.get('lat'))
+        vector = request.args.get('vector')
+
+        vector = ast.literal_eval(vector)
+        # print(vector)
+        # print(len(vector))
 
         # if not keyword:
         #     return "no keyword used"
 
-        json_response = elastic_util.elasticRestaurantQuery(keyword, dist, lat, lng)
+        json_response = elastic_util.elasticRestaurantQuery(keyword, dist, lat, lng, vector)
         return Response(response=json_response, status=200, mimetype="application/json")
 
     except ValueError:

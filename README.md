@@ -4,7 +4,7 @@
 --------------------------
 **ROUTE: /api/elrestaurants**
 
-http://172.112.215.241/api/elrestaurants?keyword=taco&dist=10&lat=33.645&lng=-117.843
+http://172.112.215.241/api/elrestaurants?keyword=taco&dist=10&lat=33.645&lng=-117.843&vector=[0.04297994269340974,0.034383954154727794,0.20916905444126074,0.04011461318051576,0.04297994269340974,0.0,0.38108882521489973,0.24068767908309455,0.0,0.0,0.008595988538681949]
 
 Arguments:
 | Name | Required | Description |
@@ -13,6 +13,7 @@ Arguments:
 | dist | required | maximum radius of search results (in miles) |
 | lat | required | latitude (float) |
 | lng | required | longitude (float) |
+| vector | required | 11 dim array [0.05, .125, ...]. Can be all zeroes if new user |
 
 
 ### Get Nearby Food Items

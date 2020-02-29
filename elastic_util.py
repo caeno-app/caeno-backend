@@ -86,7 +86,7 @@ def elasticMenuQuery(keyword, distance, lat, lon, orderby=None, order="asc") -> 
     for doc in response['hits']['hits']:
         listResults.append((doc["_id"], doc["_source"]))
 
-    print(json.dumps(listResults))
+    #print(json.dumps(listResults))
     return json.dumps(listResults)
 
 #elasticMenuQuery("taco", 10, 33.6, -117.8, "brand_id")
@@ -100,7 +100,6 @@ def elasticRestaurantQuery(keyword, distance, lat, lon, denseVector=[0,0,0,0,0,0
 
     body = {
         #"_source": ["_id", "name", "brand_id", "address", "phone", "website", "lat_lon", "densevector"],
-        "size": 30,
         "query" : {
         "bool" : {
           "must" : {
@@ -129,7 +128,7 @@ def elasticRestaurantQuery(keyword, distance, lat, lon, denseVector=[0,0,0,0,0,0
     if orderby is not None:
         body["sort"] = [_getSortArg(orderby, lat, lon, order)]
 
-    if denseVector != [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]:
+    if denseVector != [0,0,0,0,0,0,0,0,0,0,0]:
         response = elastic_client.search(
             index="restaurant_index",
             body=query
@@ -149,7 +148,9 @@ def elasticRestaurantQuery(keyword, distance, lat, lon, denseVector=[0,0,0,0,0,0
 
     for doc in response['hits']['hits']:
         listResults.append(doc["_source"])
-    print(json.dumps(listResults))
+
+    #print(json.dumps(listResults))
+    return json.dumps(listResults)
 
 
 # vector = [0.04297994269340974,
