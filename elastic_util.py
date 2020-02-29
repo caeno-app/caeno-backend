@@ -100,7 +100,6 @@ def elasticRestaurantQuery(keyword, distance, lat, lon, denseVector=[0,0,0,0,0,0
 
     body = {
         #"_source": ["_id", "name", "brand_id", "address", "phone", "website", "lat_lon", "densevector"],
-        "size": 30,
         "query" : {
         "bool" : {
           "must" : {
@@ -121,6 +120,7 @@ def elasticRestaurantQuery(keyword, distance, lat, lon, denseVector=[0,0,0,0,0,0
     if denseVector != [0,0,0,0,0,0,0,0,0,0,0]:
         inner = {"script_score": body}
         query = {"query": inner}
+        query["size"] = 30
         query["query"]["script_score"]["script"] = script
 
     if keyword is not None:
@@ -135,6 +135,7 @@ def elasticRestaurantQuery(keyword, distance, lat, lon, denseVector=[0,0,0,0,0,0
             body=query
         )
     else:
+        body["size"] = 30
         response = elastic_client.search(
             index="restaurant_index",
             body=body
