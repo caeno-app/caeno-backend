@@ -180,6 +180,7 @@ def elasticBrandIDRestaurant(brand_id) -> 'json string':
 
     body = {
         "size": 80,
+        "_source": ["_id", "name", "brand_id", "address", "phone", "website", "lat_lon"],
         "query": {
             "bool": {
                 "must": {
@@ -207,6 +208,7 @@ def elasticAllMenuBrandID(brand_id) -> 'json string':
 
     body = {
         "size": 500,
+        "_source": ["_id", "item_name", "brand_id", "calories", "restaurant", "serving"],
         "query": {
             "bool": {
                 "must": {
