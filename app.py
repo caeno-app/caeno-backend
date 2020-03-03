@@ -92,6 +92,36 @@ def get_nearby_food():
 
 # http://127.0.0.1:5000/api/elmenu?keyword=taco&dist=10&lat=33.645&lng=-117.843
 
+
+
+@app.route('/api/elrestaurantlist', methods=['GET'])
+def get_all_brand_restaurants():
+    try:
+        brandID = request.args.get('brandid')
+
+        json_response = elastic_util.elasticBrandIDRestaurant(brandID)
+        return Response(response=json_response, status=200, mimetype="application/json")
+
+    except ValueError:
+        return Response(response="{'error': 'Failed to parse request.' }", status=400, mimetype="application/json")
+
+# http://127.0.0.1:5000/api/elrestaurantlist?brandid=513fbc1283aa2dc80c0000b4
+
+
+@app.route('/api/elmenulist', methods=['GET'])
+def get_all_menu_items():
+    try:
+        brandID = request.args.get('brandid')
+
+        json_response = elastic_util.elasticAllMenuBrandID(brandID)
+        return Response(response=json_response, status=200, mimetype="application/json")
+
+    except ValueError:
+        return Response(response="{'error': 'Failed to parse request.' }", status=400, mimetype="application/json")
+
+# http://127.0.0.1:5000/api/elmenulist?brandid=513fbc1283aa2dc80c0000b4
+
+
 # @app.errorhandler(500)
 # def internal_error(error):
 #     return render_template('errors/500.html'), 500

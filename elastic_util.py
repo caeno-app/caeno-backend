@@ -149,6 +149,7 @@ def elasticRestaurantQuery(keyword, distance, lat, lon, denseVector=[0,0,0,0,0,0
     # )
 
     for doc in response['hits']['hits']:
+        doc["_source"]["_id"] = doc["_id"]
         listResults.append(doc["_source"])
 
     #print(json.dumps(listResults))
@@ -172,13 +173,13 @@ def elasticRestaurantQuery(keyword, distance, lat, lon, denseVector=[0,0,0,0,0,0
 #elasticRestaurantQuery("taco", 5, 33.6, -117.8, vector, "_score") # sort by cosine similarity, different than above without sort
 
 
-def elasticBrandIDQuery(brand_id, lat, lon, orderby=None, order="asc") -> 'json string':
+def elasticBrandIDRestaurant(brand_id) -> 'json string':
     listResults = list()
 
     elastic_client = Elasticsearch([GLOBALS.ELASTIC_IP], http_auth=('user1', 'user1'), port=9200, use_ssl=False)
 
     body = {
-        "size": 30,
+        "size": 80,
         "query": {
             "bool": {
                 "must": {
@@ -188,12 +189,37 @@ def elasticBrandIDQuery(brand_id, lat, lon, orderby=None, order="asc") -> 'json 
         }
     }
 
-    if orderby is not None:
-        body["sort"] = [_getSortArg(orderby, lat, lon, order)]
-
     response = elastic_client.search(index="restaurant_index", body=body)
 
     for doc in response['hits']['hits']:
+        doc["_source"]["_id"] = doc["_id"]
+        listResults.append(doc["_source"])
+
+    return json.dumps(listResults)
+
+#print(elasticBrandIDQuery("513fbc1283aa2dc80c000020", 33.6, -117.8))
+
+
+def elasticAllMenuBrandID(brand_id) -> 'json string':
+    listResults = list()
+
+    elastic_client = Elasticsearch([GLOBALS.ELASTIC_IP], http_auth=('user1', 'user1'), port=9200, use_ssl=False)
+
+    body = {
+        "size": 500,
+        "query": {
+            "bool": {
+                "must": {
+                    "term": {"brand_id": brand_id}
+                }
+            }
+        }
+    }
+
+    response = elastic_client.search(index="menu_index", body=body)
+
+    for doc in response['hits']['hits']:
+        doc["_source"]["_id"] = doc["_id"]
         listResults.append(doc["_source"])
 
     return json.dumps(listResults)

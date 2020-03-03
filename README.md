@@ -31,6 +31,30 @@ Arguments:
 | lng | required | longitude (float) |
 
 
+### Get All Restaurants by brandID
+---------------------------------
+**ROUTE: /api/elrestaurantlist**
+
+http://172.112.215.241/api/elrestaurantlist?brandid=513fbc1283aa2dc80c0000b4
+
+Arguments:
+| Name | Required | Description |
+| --- | --- | --- |
+| brandid | required | brand_id from restaurant (string) |
+
+
+### Get All Menu Items by brandID
+---------------------------------
+**ROUTE: /api/elmenulist**
+
+http://172.112.215.241/api/elmenulist?brandid=513fbc1283aa2dc80c0000b4
+
+Arguments:
+| Name | Required | Description |
+| --- | --- | --- |
+| brandid | required | brand_id from restaurant (string) |
+
+
 ### Nutrix API Get Nearby Restaurants
 ---------------------------------
 **ROUTE: /api/nutrixrestaurants**
