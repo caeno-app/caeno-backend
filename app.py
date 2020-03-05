@@ -64,7 +64,7 @@ def get_nearby_restaurants():
         # if not keyword:
         #     return "no keyword used"
 
-        json_response = elastic_util.elasticRestaurantQuery(keyword, dist, lat, lng, vector)
+        json_response = elastic_util.elasticRestaurantQuery(dist, lat, lng, vector, keyword)
         return Response(response=json_response, status=200, mimetype="application/json")
 
     except ValueError:

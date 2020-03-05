@@ -1,6 +1,7 @@
 from elasticsearch import Elasticsearch
 import GLOBALS
 import json
+from scipy import spatial
 
 def _getSortArg(orderby, lat, lon, order="asc"):
     # TODO: Check if orderby is a valid column in db
@@ -93,84 +94,73 @@ def elasticMenuQuery(keyword, distance, lat, lon, orderby=None, order="asc") -> 
 #elasticMenuQuery("acai", 3, 33.6, -117.8)
 
 
-def elasticRestaurantQuery(keyword, distance, lat, lon, denseVector=[0,0,0,0,0,0,0,0,0,0,0], orderby=None, order="asc") -> 'json string':
-    listResults = list()
-
+def elasticRestaurantQuery(distance, lat, lon, denseVector=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], keyword=None, orderby=None, order="asc") -> 'json string':
     elastic_client = Elasticsearch([GLOBALS.ELASTIC_IP], http_auth=('user1', 'user1'), port=9200, use_ssl=False)
 
-    body = {
-        #"_source": ["_id", "name", "brand_id", "address", "phone", "website", "lat_lon", "densevector"],
-        "query" : {
-        "bool" : {
-          "must" : {
-                "match_all" : {}
+    # Get nearby restaurants
+    response = elastic_client.search(
+        index="restaurant_index",
+        body={
+            "size": 100,
+            "sort": [
+                {
+                    "_geo_distance": {
+                        "lat_lon": [lon, lat],
+                        "order": "asc",
+                        "unit": "mi",
+                        "mode": "min",
+                        "distance_type": "arc"
+                    }
+                }
+            ],
+            "query": {
+                "bool": {
+                    "must": {"match_all": {}
+                             },
+                    "filter": {
+                        "geo_distance": {
+                            "distance": f"{distance}mi",
+                            "lat_lon": {
+                                "lat": lat,
+                                "lon": lon
+                            }
+                        }
+                    }
+                }
             }
         }
-      }
-    }
+    )
 
-    script = {
-        "source": "cosineSimilarity(params.query_vector, doc['densevector']) + 1.0",
-        "params": {
-            "query_vector": denseVector
-        }
-    }
-
-    query = None
-    if denseVector != [0,0,0,0,0,0,0,0,0,0,0]:
-        inner = {"script_score": body}
-        query = {"query": inner}
-        query["size"] = 30
-        query["query"]["script_score"]["script"] = script
-
-    if keyword is not None:
-        body["query"]["bool"] = _keyOptionalRestaurant(keyword)
-
-    if orderby is not None:
-        body["sort"] = [_getSortArg(orderby, lat, lon, order)]
-
-    if denseVector != [0,0,0,0,0,0,0,0,0,0,0]:
-        response = elastic_client.search(
-            index="restaurant_index",
-            body=query
-        )
-    else:
-        body["size"] = 30
-        response = elastic_client.search(
-            index="restaurant_index",
-            body=body
-        )
-
-    # BOMBS, [script=script] DOES NOT WORK
-    # response = elastic_client.search(
-    #     index="restaurant_index",
-    #     body=body,
-    #     script=script
-    # )
-
+    # Remove duplicates and compute similarity to user vector
+    included = set()
+    withoutDuplicates = list()
     for doc in response['hits']['hits']:
-        doc["_source"]["_id"] = doc["_id"]
-        listResults.append(doc["_source"])
+        if doc["_source"]["brand_id"] not in included:
+            included.add(doc["_source"]["brand_id"])
+            doc["_source"]["_id"] = doc["_id"]
+            doc["_source"]["similarity"] = (1 - spatial.distance.cosine(denseVector, doc["_source"]["densevector"]))
+            withoutDuplicates.append(doc["_source"])
 
-    #print(json.dumps(listResults))
-    return json.dumps(listResults)
-
+    # Sort by similarity if the user vector is not the zero vector.
+    if denseVector == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]:
+        return json.dumps(withoutDuplicates)
+    else:
+        return json.dumps(sorted(withoutDuplicates, key=lambda v: v["similarity"], reverse=True), indent=1)
 
 # vector = [0.04297994269340974,
-#  0.034383954154727794,
-#  0.20916905444126074,
-#  0.04011461318051576,
-#  0.04297994269340974,
-#  0.0,
-#  0.38108882521489973,
-#  0.24068767908309455,
-#  0.0,
-#  0.0,
-#  0.008595988538681949]
+# #  0.034383954154727794,
+# #  0.20916905444126074,
+# #  0.04011461318051576,
+# #  0.04297994269340974,
+# #  0.0,
+# #  0.38108882521489973,
+# #  0.24068767908309455,
+# #  0.0,
+# #  0.0,
+# #  0.008595988538681949]
 
-#elasticRestaurantQuery("taco", 5, 33.6, -117.8) # first hit: Taco Bell, "lat_lon": [{"lat": 33.72465515136719, "lon": -117.919921875}]
-#elasticRestaurantQuery("taco", 5, 33.6, -117.8, vector) # first hit: Del Taco, 3329 South Harbor Boulevard
-#elasticRestaurantQuery("taco", 5, 33.6, -117.8, vector, "_score") # sort by cosine similarity, different than above without sort
+#elasticRestaurantQuery(5, 33.6, -117.8) # first hit: Taco Bell, "lat_lon": [{"lat": 33.72465515136719, "lon": -117.919921875}]
+#elasticRestaurantQuery(5, 33.6, -117.8, vector) # first hit: Del Taco, 3329 South Harbor Boulevard
 
 
 def elasticBrandIDRestaurant(brand_id) -> 'json string':
@@ -208,7 +198,7 @@ def elasticAllMenuBrandID(brand_id) -> 'json string':
 
     body = {
         "size": 500,
-        "_source": ["_id", "item_name", "brand_id", "calories", "restaurant", "serving"],
+        "_source": ["_id", "item_name", "calories"],
         "query": {
             "bool": {
                 "must": {
@@ -220,10 +210,16 @@ def elasticAllMenuBrandID(brand_id) -> 'json string':
 
     response = elastic_client.search(index="menu_index", body=body)
 
-    for doc in response['hits']['hits']:
-        doc["_source"]["_id"] = doc["_id"]
-        listResults.append(doc["_source"])
+    groups = dict()
+    for item in response['hits']['hits']:
+        item["_source"]["_id"] = item["_id"]
+        k = item["_source"]["item_name"].split(",", 1)
+        if k[0] not in groups:
+            groups[k[0]] = list()
+        groups[k[0]].append(item["_source"])
 
-    return json.dumps(listResults)
+    groupedResults = [{"group_id": k, "items": v} if (len(v) > 1) else v[0] for k, v in groups.items()]
 
-#print(elasticBrandIDQuery("513fbc1283aa2dc80c000020", 33.6, -117.8))
+    return json.dumps(groupedResults)
+
+#print(elasticBrandIDQuery("513fbc1283aa2dc80c000020"))
