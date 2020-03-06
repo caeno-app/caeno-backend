@@ -4,7 +4,7 @@
 --------------------------
 **ROUTE: /api/elrestaurants**
 
-http://172.112.215.241/api/elrestaurants?keyword=taco&dist=10&lat=33.645&lng=-117.843&vector=[0.04297994269340974,0.034383954154727794,0.20916905444126074,0.04011461318051576,0.04297994269340974,0.0,0.38108882521489973,0.24068767908309455,0.0,0.0,0.008595988538681949]
+https://api.caeno.app/api/elrestaurants?keyword=taco&dist=10&lat=33.645&lng=-117.843&vector=[0.04297994269340974,0.034383954154727794,0.20916905444126074,0.04011461318051576,0.04297994269340974,0.0,0.38108882521489973,0.24068767908309455,0.0,0.0,0.008595988538681949]
 
 Arguments:
 | Name | Required | Description |
@@ -20,7 +20,7 @@ Arguments:
 -------------------------
 **ROUTE: /api/elmenu**
 
-http://172.112.215.241/api/elmenu?dist=10&lat=33.645&lng=-117.843
+https://api.caeno.app/api/elmenu?dist=10&lat=33.645&lng=-117.843
 
 Arguments:
 | Name | Required | Description |
@@ -35,7 +35,7 @@ Arguments:
 ---------------------------------
 **ROUTE: /api/elrestaurantlist**
 
-http://172.112.215.241/api/elrestaurantlist?brandid=513fbc1283aa2dc80c0000b4
+https://api.caeno.app/api/elrestaurantlist?brandid=513fbc1283aa2dc80c0000b4
 
 Arguments:
 | Name | Required | Description |
@@ -47,7 +47,7 @@ Arguments:
 ---------------------------------
 **ROUTE: /api/elmenulist**
 
-http://172.112.215.241/api/elmenulist?brandid=513fbc1283aa2dc80c0000b4
+https://api.caeno.app/api/elmenulist?brandid=513fbc1283aa2dc80c0000b4
 
 Arguments:
 | Name | Required | Description |
@@ -68,7 +68,7 @@ Arguments:
 | lim | (optional) | How many results to return (default = 20, max = 50) |
 
 Usage example:
-/restaurants?dist=2&lat=33.992&lng=-117.374&lim=2
+https://api.caeno.app/restaurants?dist=2&lat=33.992&lng=-117.374&lim=2
 
 ```json
 {

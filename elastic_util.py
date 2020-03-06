@@ -159,7 +159,7 @@ def elasticRestaurantQuery(distance, lat, lon, denseVector=[0, 0, 0, 0, 0, 0, 0,
                 doc["_source"]["similarity"] = (1 - spatial.distance.cosine(denseVector, doc["_source"]["densevector"]))
             else:
                 doc["_source"]["similarity"] = -1
-                
+
             withoutDuplicates.append(doc["_source"])
 
     # Sort by similarity if the user vector is not the zero vector.
