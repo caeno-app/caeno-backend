@@ -5,6 +5,8 @@ from scipy import spatial
 
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+import nltk
+nltk.download('punkt')
 
 stop_words = set(stopwords.words('english'))
 
