@@ -51,16 +51,14 @@ def _keyOptionalMenu(keyword):
 
 def _keyOptionalRestaurant(keyword):
     if keyword is None:
-        return {"must": {
+        return {
             "match_all": {}
-        }}
+        }
     else:
         return {
-            "must": {
-                "multi_match": {
-                    "fields": ["name"],
-                    "query": f"{keyword}"
-                }
+            "multi_match": {
+                "fields": ["name"],
+                "query": f"{keyword}"
             }
         }
 
@@ -143,7 +141,7 @@ def elasticRestaurantQuery(distance, lat, lon, denseVector=[0, 0, 0, 0, 0, 0, 0,
         }
     }
 
-    body["query"]["bool"] = _keyOptionalRestaurant(keyword)
+    body["query"]["bool"]["must"] = _keyOptionalRestaurant(keyword)
 
     response = elastic_client.search(
         index="restaurant_index", body=body
