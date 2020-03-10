@@ -55,6 +55,18 @@ Arguments:
 | brandid | required | brand_id from restaurant (string) |
 
 
+### Get Restaurant Vector from brandID
+---------------------------------
+**ROUTE: /api/elrestvector**
+
+https://api.caeno.app/api/elrestvector?brandid=513fbc1283aa2dc80c0000b4
+
+Arguments:
+| Name | Required | Description |
+| --- | --- | --- |
+| brandid | required | brand_id for restaurant (string) |
+
+
 ### Nutrix API Get Nearby Restaurants
 ---------------------------------
 **ROUTE: /api/nutrixrestaurants**

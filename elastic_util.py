@@ -249,3 +249,26 @@ def elasticAllMenuBrandID(brand_id) -> 'json string':
 
     groupedResults = [{"group_id": k, "items": v} if (len(v) > 1) else v[0] for k, v in groups.items()]
     return json.dumps(groupedResults, indent=1)
+
+
+def elasticBrandIDVector(brand_id) -> 'json string':
+    elastic_client = Elasticsearch([GLOBALS.ELASTIC_IP], http_auth=('user1', 'user1'), port=9200, use_ssl=False)
+
+    body = {
+        "size": 1,
+        "_source": ["densevector"],
+        "query": {
+            "bool": {
+                "must": {
+                    "term": {"brand_id": brand_id}
+                }
+            }
+        }
+    }
+
+    response = elastic_client.search(index="restaurant_index", body=body)
+
+    for doc in response['hits']['hits']:
+        return json.dumps(doc["_source"])
+
+# print(elasticBrandIDVector("513fbc1283aa2dc80c0000b4"))
