@@ -93,6 +93,26 @@ def get_nearby_food():
 # http://127.0.0.1:5000/api/elmenu?keyword=taco&dist=10&lat=33.645&lng=-117.843
 
 
+@app.route('/api/recommendeditems', methods=['GET'])
+def get_recommended_items():
+    try:
+        dist = int(request.args.get('dist'))
+        lng = float(request.args.get('lng'))
+        lat = float(request.args.get('lat'))
+
+        vector = request.args.get('vector')
+        vector = ast.literal_eval(vector)
+
+        keyword = request.args.get('keyword')
+
+        json_response = elastic_util.elasticRecomendedMenuItems(vector, dist, lat, lng)
+        return Response(response=json_response, status=200, mimetype="application/json")
+
+    except ValueError:
+        return Response(response="{'error': 'Failed to parse request.' }", status=400, mimetype="application/json")
+
+# http://127.0.0.1:5000/api/recommendeditems?dist=10&lat=33.645&lng=-117.843
+
 
 @app.route('/api/elrestaurantlist', methods=['GET'])
 def get_all_brand_restaurants():
