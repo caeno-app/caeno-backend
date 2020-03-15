@@ -37,14 +37,16 @@ def _getSortArg(orderby, lat, lon, order="asc"):
 
 def _keyOptionalMenu(keyword):
     if keyword is None:
-        return {
+        return {"must": {
             "match_all": {}
-        }
+        }}
     else:
         return {
-            "multi_match": {
-                "fields": ["restaurant", "item_name", "serving"],
-                "query": f"{keyword}"
+            "must": {
+                "multi_match": {
+                    "fields": ["restaurant", "item_name", "serving"],
+                    "query": f"{keyword}"
+                }
             }
         }
 
@@ -178,7 +180,7 @@ def elasticMenuQuery(keyword, distance, lat, lon, orderby=None, order="asc") -> 
         }
     }
     if keyword is not None:
-        body["query"]["bool"]["must"] = _keyOptionalMenu(keyword)
+        body["query"]["bool"] = _keyOptionalMenu(keyword)
 
     if orderby is not None:
         body["sort"] = [_getSortArg(orderby, lat, lon, order)]
