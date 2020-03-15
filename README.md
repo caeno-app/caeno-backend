@@ -1,6 +1,6 @@
 # caeno-backend
 
-### Get Nearby Restaurants:
+### Get Nearby Restaurants (Vector)
 --------------------------
 **ROUTE: /api/elrestaurants**
 
@@ -14,6 +14,21 @@ Arguments:
 | lat | required | latitude (float) |
 | lng | required | longitude (float) |
 | vector | required | 11 dim array [0.05, .125, ...]. Can be all zeroes if new user |
+
+
+### Get Recommended Food Items (Vector)
+-------------------------
+**ROUTE: /api/recommendeditems**
+
+https://api.caeno.app/api/recommendeditems?vector=[0,0,0,0,0,0,0,0,0,0,0]&dist=10&lat=33.645&lng=-117.843
+
+Arguments:
+| Name | Required | Description |
+| --- | --- | --- |
+| vector | required | 11 dim array [0.05, .125, ...]. Can be all zeroes if new user |
+| dist | required | maximum radius of search results (in miles) |
+| lat | required | latitude (float) |
+| lng | required | longitude (float) |
 
 
 ### Get Nearby Food Items
